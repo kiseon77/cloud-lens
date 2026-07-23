@@ -1,0 +1,68 @@
+name: Claude PR Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  claude-review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Claude 구독(Pro/Max) 사용량으로 실행. API 키가 아니라 OAuth 토큰을 씀.
+      # 실패해도(사용량 소진 등) 워크플로 전체가 죽지 않도록 continue-on-error.
+      - name: Run Claude Code Review
+        id: claude-review
+        continue-on-error: true
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            너는 10년차 프론트엔드 아키텍트다. 이 PR의 diff를 리뷰해라.
+            프로젝트: CloudLens (Next.js App Router, TypeScript, Tailwind, shadcn/ui,
+            TanStack Query/Table, Recharts, Supabase).
+            리뷰 기준은 저장소 루트의 CLAUDE.md와 frontend-veteran-reviewer 서브에이전트
+            정의를 따른다. Blocking / Should-fix / Nit 세 그룹으로 나눠서 PR에 코멘트로 남겨라.
+
+            리뷰 코멘트 맨 위에는 반드시 아래 문구를 그대로 포함해라(투명하게 AI 리뷰임을 밝히기 위함):
+            "> 🤖 이 리뷰는 Claude(AI)가 작성했습니다. 참고용으로만 활용하고 최종 판단은 직접 하세요."
+
+      # 사용량 소진 등으로 리뷰가 실패하면, 조용히 넘어가지 않고
+      # PR에 "지금은 못 받았다"는 걸 명시적으로 남긴다.
+      - name: 사용량 부족 시 안내 코멘트
+        if: steps.claude-review.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: [
+                "🤖 AI 리뷰가 이번엔 실행되지 않았습니다.",
+                "Claude 구독 사용량(5시간 롤링 윈도우 또는 주간 한도)이 소진됐을 가능성이 높습니다.",
+                "사용량이 초기화된 뒤 이 PR에 새 커밋을 푸시하면 자동으로 다시 시도됩니다.",
+                "그 전까지는 로컬 frontend-veteran-reviewer 서브에이전트나 직접 리뷰로 대체해주세요."
+              ].join("\n")
+            })
+
+      # 성공한 리뷰에는 라벨을 붙여서, PR 목록만 봐도
+      # "AI 피드백을 받은 PR"이라는 기록이 남도록 한다.
+      - name: AI 리뷰 완료 라벨 추가
+        if: steps.claude-review.outcome == 'success'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: ["ai-reviewed"]
+            })
