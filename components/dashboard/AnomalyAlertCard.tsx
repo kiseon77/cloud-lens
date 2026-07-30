@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Dialog } from "../ui/dialog";
-
+//	전일 대비 일정 비율(예: +30%) 이상 급증한 서비스/리소스를 리스트업하는 경고 카드
 export default function AnomalyAlertCard({
   className,
 }: {

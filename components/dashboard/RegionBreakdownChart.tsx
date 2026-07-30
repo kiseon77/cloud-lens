@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, CardContent, CardHeader } from "../ui/card";
-
+//리전별 비용 바차트
 export default function RegionBreakdownChart({
   className,
 }: {
