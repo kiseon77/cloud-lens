@@ -8,8 +8,10 @@ import FilterBar from "@/components/cost/FilterBar";
 import Pagination from "@/components/cost/Pagination";
 import SearchInput from "@/components/cost/SearchInput";
 
-import { supabase } from "@/lib/supabase/client";
-import page from "../budgets/page";
+import { useDebounce } from "@/lib/hooks/useDebounce";
+import { REGION_OPTIONS, SERVICE_OPTIONS } from "@/lib/constants";
+import useResourceData from "@/lib/hooks/useResourceCosts";
+import useGetTagList from "@/lib/hooks/useGetTagList";
 
 export interface CostData {
   id: number;
@@ -22,43 +24,73 @@ export interface CostData {
 }
 
 export default function Cost() {
-  const filterData = [
-    { label: "서비스", value: "service" },
-    { label: "리전", value: "region" },
-    { label: "태그", value: "tag" },
-  ];
+  //검색
+  const [searchQuery, setSearchQuery] = useState("");
+  const handleDebounce = useDebounce(searchQuery, 300);
 
-  const [costData, setCostData] = useState<CostData[]>([]);
-  const [page, setPage] = useState(0);
+  const [serviceFilter, setServiceFilter] = useState("");
+  const [regionFilter, setRegionFilter] = useState("");
+  const [tagFilter, setTagFilter] = useState("");
+
+  //페이지
+  const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
-  useEffect(() => {
-    const getData = async () => {
-      const { data, count, error }: { data: CostData[]; count: number } =
-        await supabase
-          .from("resource_costs")
-          .select("*", { count: "exact" })
-          .range(page * pageSize, (page + 1) * pageSize - 1);
-      setCostData(data);
-    };
-    getData();
-  }, []);
-
+  const { data, error } = useResourceData(
+    page,
+    pageSize,
+    handleDebounce,
+    serviceFilter,
+    regionFilter,
+    tagFilter,
+  );
+  const {
+    data: tagList,
+    isLoading: isTagListLoading,
+    error: tagListError,
+  } = useGetTagList();
+  const filterData = [
+    {
+      id: "service",
+      label: "서비스",
+      options: SERVICE_OPTIONS,
+    },
+    {
+      id: "region",
+      label: "리전",
+      options: REGION_OPTIONS,
+    },
+    { id: "tag", label: "태그", options: tagList?.data || [] },
+  ];
   return (
     <main className="flex  w-full flex-col items-center gap-8 py-32 px-16 bg-white dark:bg-black sm:items-start">
       <section className="flex w-full items-center justify-between gap-4">
-        <SearchInput />
+        <SearchInput
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+        />
+
         {filterData.map((filter) => (
           <FilterBar
-            key={filter.value}
+            key={filter.id}
             label={filter.label}
-            value={filter.value}
+            setServiceFilter={setServiceFilter}
+            setRegionFilter={setRegionFilter}
+            setTagFilter={setTagFilter}
+            options={filter.options}
+            serviceFilter={serviceFilter}
+            regionFilter={regionFilter}
+            tagFilter={tagFilter}
           />
         ))}
         <ExportCsvButton />
       </section>
-      <CostDataTable costData={costData} />
-      <Pagination />
+      <CostDataTable costData={data?.data || []} />
+      <Pagination
+        page={page}
+        totalPages={Math.ceil((data?.count || 0) / pageSize)}
+        onPageChange={setPage}
+      />
     </main>
   );
 }

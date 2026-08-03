@@ -14,7 +14,6 @@ import { Badge } from "../ui/badge";
 
 //TanStack Table 기반, 정렬·컬럼 리사이즈·페이지네이션 지원하는 메인 테이블
 export default function CostDataTable({ costData }: { costData: CostData[] }) {
-  console.log("CostDataTable costData:", costData);
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
   const columns = React.useMemo<ColumnDef<CostData>[]>(
@@ -39,9 +38,7 @@ export default function CostDataTable({ costData }: { costData: CostData[] }) {
         header: () => <span>태그</span>,
         cell: (info) => {
           const tags = info.getValue() as Record<string, string>;
-          return Object.entries(tags).map(([key, value]) => (
-            <Badge key={key}>{value}</Badge>
-          ));
+          return <Badge>{tags.Team}</Badge>;
         },
       },
       {

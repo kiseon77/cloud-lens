@@ -3,23 +3,49 @@ import React from "react";
 //서비스/리전/태그(Team, Environment) 다중 선택 필터, 상태를 URL 쿼리 파라미터와 동기화
 export default function FilterBar({
   label,
-  value,
+  setServiceFilter,
+  setRegionFilter,
+  setTagFilter,
+  options,
+  serviceFilter,
+  regionFilter,
+  tagFilter,
 }: {
   label: string;
-  value: string;
+  options: readonly string[];
+  setServiceFilter: React.Dispatch<React.SetStateAction<string>>;
+  setRegionFilter: React.Dispatch<React.SetStateAction<string>>;
+  setTagFilter: React.Dispatch<React.SetStateAction<string>>;
+  serviceFilter: string;
+  regionFilter: string;
+  tagFilter: string;
 }) {
   return (
     <select
-      value={value}
+      value={
+        label === "서비스"
+          ? serviceFilter
+          : label === "리전"
+            ? regionFilter
+            : tagFilter
+      }
       onChange={(e) => {
         console.log(e.target.value);
+        if (label === "서비스") {
+          setServiceFilter(e.target.value);
+        } else if (label === "리전") {
+          setRegionFilter(e.target.value);
+        } else {
+          setTagFilter(e.target.value);
+        }
       }}
     >
-      hh
-      {label}
-      <option value="service">서비스</option>
-      <option value="region">리전</option>
-      <option value="tag">태그</option>
+      <option value="">{label}</option>
+      {options.map((option) => (
+        <option key={option} value={option}>
+          {option}
+        </option>
+      ))}
     </select>
   );
 }
