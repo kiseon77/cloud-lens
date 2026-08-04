@@ -15,11 +15,11 @@ export default async function getResourceData(
   }
 
   if (serviceFilter) {
-    query = query.ilike(`service`, `%${serviceFilter}%`);
+    query = query.eq(`service`, serviceFilter);
   }
 
   if (regionFilter) {
-    query = query.ilike(`region`, `%${regionFilter}%`);
+    query = query.eq(`region`, regionFilter);
   }
 
   if (tagFilter) {
