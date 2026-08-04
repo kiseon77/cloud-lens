@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import CostDataTable from "@/components/cost/CostDataTable";
 import ExportCsvButton from "@/components/cost/ExportCsvButton";
@@ -10,18 +10,8 @@ import SearchInput from "@/components/cost/SearchInput";
 
 import { useDebounce } from "@/lib/hooks/useDebounce";
 import { REGION_OPTIONS, SERVICE_OPTIONS } from "@/lib/constants";
-import useResourceData from "@/lib/hooks/useResourceCosts";
 import useGetTagList from "@/lib/hooks/useGetTagList";
-
-export interface CostData {
-  id: number;
-  resource_name: string;
-  service: string;
-  region: string;
-  tags: Record<string, string>;
-  daily_cost: number;
-  monthly_cost: number;
-}
+import useResourceData from "@/lib/hooks/useResourceCosts";
 
 export default function Cost() {
   //검색
@@ -85,7 +75,7 @@ export default function Cost() {
         ))}
         <ExportCsvButton />
       </section>
-      <CostDataTable costData={data?.data || []} />
+      <CostDataTable data={data?.data || []} />
       <Pagination
         page={page}
         totalPages={Math.ceil((data?.count || 0) / pageSize)}

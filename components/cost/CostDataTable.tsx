@@ -9,11 +9,11 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { Table, TableBody, TableHeader } from "../ui/table";
-import { CostData } from "@/app/cost/page";
 import { Badge } from "../ui/badge";
+import { CostData } from "@/lib/type";
 
 //TanStack Table 기반, 정렬·컬럼 리사이즈·페이지네이션 지원하는 메인 테이블
-export default function CostDataTable({ costData }: { costData: CostData[] }) {
+export default function CostDataTable({ data }: { data: CostData[] }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
   const columns = React.useMemo<ColumnDef<CostData>[]>(
@@ -57,9 +57,9 @@ export default function CostDataTable({ costData }: { costData: CostData[] }) {
 
   const table = useReactTable({
     columns,
-    data: costData,
+    data: data,
     debugTable: true,
-    rowCount: costData.length,
+    rowCount: data.length,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     onSortingChange: setSorting,
