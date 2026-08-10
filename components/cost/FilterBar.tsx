@@ -30,7 +30,6 @@ export default function FilterBar({
             : tagFilter
       }
       onChange={(e) => {
-        console.log(e.target.value);
         if (label === "서비스") {
           setServiceFilter(e.target.value);
         } else if (label === "리전") {
