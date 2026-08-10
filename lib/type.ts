@@ -20,4 +20,21 @@ interface BudgetList {
   created_at: Date;
 }
 
-export type { CostData, BudgetList };
+interface BudgetLimit {
+  scope_value: string;
+  monthly_limit: number;
+  current_spend: number;
+  threshold_percent: number;
+}
+
+interface Anomaly {
+  cost_date: Date;
+  service: string;
+  region: string;
+  daily_cost: number;
+  prev_day_cost: number;
+  avg_7d: number;
+  stddev_7d: number;
+}
+
+export type { CostData, BudgetList, BudgetLimit, Anomaly };
