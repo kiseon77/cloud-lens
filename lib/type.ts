@@ -36,5 +36,10 @@ interface Anomaly {
   avg_7d: number;
   stddev_7d: number;
 }
+type CostTrend<K extends string> = {
+  [key in K]: string;
+} & {
+  total_cost: number;
+};
 
-export type { CostData, BudgetList, BudgetLimit, Anomaly };
+export type { CostData, BudgetList, BudgetLimit, Anomaly, CostTrend };

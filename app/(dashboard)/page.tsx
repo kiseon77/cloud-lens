@@ -7,7 +7,10 @@ import ServiceBreakdownChart from "@/components/dashboard/ServiceBreakdownChart"
 import SummaryCard from "@/components/dashboard/SummaryCard";
 import useBudgetLimit from "@/lib/hooks/useBudgetLimit";
 import useCostAnomalies from "@/lib/hooks/useCostAnomalies";
+import useCostTrend from "@/lib/hooks/useCostTrend";
 import useMonthCost from "@/lib/hooks/useMonthCost";
+import useRegionBreakdownChart from "@/lib/hooks/useRegionBreakdownChart";
+import useServiceBreakdownChart from "@/lib/hooks/useServiceBreakdownChart";
 import { Anomaly, BudgetLimit } from "@/lib/type";
 
 export default function Home() {
@@ -36,6 +39,22 @@ export default function Home() {
     isLoading: budgetLimitLoading,
     error: budgetLimitError,
   } = useBudgetLimit();
+  const {
+    data: dailyCostData,
+    isLoading: dailyCostLoading,
+    error: dailyCostError,
+  } = useCostTrend();
+  const {
+    data: regionBreakdownChartData,
+    isLoading: regionBreakdownChartLoading,
+    error: regionBreakdownChartError,
+  } = useRegionBreakdownChart();
+
+  const {
+    data: serviceBreakdownChartData,
+    isLoading: serviceBreakdownChartLoading,
+    error: serviceBreakdownChartError,
+  } = useServiceBreakdownChart();
 
   const monthCostDataFooterText = () => {
     if (ThisMonthCostData?.data - BeforeMonthCostData?.data > 0) {
@@ -65,6 +84,7 @@ export default function Home() {
     return Number(totalLimit.toFixed(1));
   };
 
+  //최근 7일 중 이상건수 중, 전일 대비 30% 증감 리스트
   const AnomalyAlertList = (data: Anomaly[]) => {
     if (!data || data.length === 0) return;
     return data.filter(
@@ -93,11 +113,17 @@ export default function Home() {
         />
         <AnomalyAlertCard
           className="col-span-3"
-          data={AnomalyAlertList(costAnomaliesData?.data)}
+          data={AnomalyAlertList(costAnomaliesData?.data) || []}
         />
-        <CostTrendChart className="col-span-2" />
-        <ServiceBreakdownChart className="col-span-1" />
-        <RegionBreakdownChart className="col-span-3" />
+        <CostTrendChart className="col-span-2" data={dailyCostData?.data} />
+        <ServiceBreakdownChart
+          className="col-span-1"
+          data={serviceBreakdownChartData?.data}
+        />
+        <RegionBreakdownChart
+          className="col-span-3"
+          data={regionBreakdownChartData?.data}
+        />
       </main>
     </div>
   );

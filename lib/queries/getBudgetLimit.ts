@@ -5,7 +5,7 @@ export default async function getBudgetLimit() {
     .from("budgets")
     .select("scope_value, monthly_limit, current_spend, threshold_percent");
 
-  const { data, count, error } = await query;
+  const { data, error } = await query;
 
-  return { data, count, error };
+  return { data, error };
 }
