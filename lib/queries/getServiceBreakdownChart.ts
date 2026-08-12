@@ -1,7 +1,7 @@
-import { supabase } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 
 export default async function getServiceBreakdownChart() {
-  const query = supabase.rpc("get_service_costs");
+  const query = createClient().rpc("get_service_costs");
 
   const { data, error } = await query;
 

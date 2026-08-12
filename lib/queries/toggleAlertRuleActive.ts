@@ -1,7 +1,7 @@
-import { supabase } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 
 export default async function toggleAlertRuleActive({ id, is_active }) {
-  const { data, error } = await supabase
+  const { data, error } = await createClient()
     .from("alert_rules")
     .update({ is_active })
     .eq("id", id)

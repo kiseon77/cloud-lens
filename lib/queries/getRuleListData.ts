@@ -1,7 +1,9 @@
-import { supabase } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 
 export default async function getRuleListData(page: number, pageSize: number) {
-  let query = supabase.from("alert_rules").select("*", { count: "exact" });
+  let query = createClient()
+    .from("alert_rules")
+    .select("*", { count: "exact" });
 
   const { data, count, error } = await query.range(
     Math.max(0, (page - 1) * pageSize),
