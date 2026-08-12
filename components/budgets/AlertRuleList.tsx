@@ -12,6 +12,7 @@ import {
 import { Table, TableBody, TableHeader } from "../ui/table";
 import { BudgetList } from "@/lib/type";
 import { Switch } from "../ui/switch";
+import useToggleAlertRule from "@/lib/hooks/useRegionBreakdownChart";
 
 export default function AlertRuleList({
   data,
@@ -21,6 +22,7 @@ export default function AlertRuleList({
   className?: string;
 }) {
   const [sorting, setSorting] = useState<SortingState>([]);
+  const { mutate: toggleActive, isPending, variables } = useToggleAlertRule();
 
   const columns = useMemo<ColumnDef<BudgetList>[]>(
     () => [
@@ -43,15 +45,28 @@ export default function AlertRuleList({
         },
       },
       {
-        accessorKey: "is_active_toggle",
+        id: "is_active_toggle",
         header: () => <span></span>,
-        cell: (info) => {
-          const is_active = info.getValue() as boolean;
-          return <Switch />;
+        cell: ({ row }) => {
+          const rule = row.original as BudgetList & {
+            id: string | number;
+            is_active: boolean;
+          };
+          const isRowPending = isPending && variables?.id === rule.id;
+
+          return (
+            <Switch
+              checked={rule.is_active}
+              disabled={isRowPending}
+              onCheckedChange={(checked: boolean) => {
+                toggleActive({ id: rule.id, is_active: checked });
+              }}
+            />
+          );
         },
       },
     ],
-    [],
+    [isPending, variables, toggleActive],
   );
 
   const table = useReactTable({
