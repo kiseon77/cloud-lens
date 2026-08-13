@@ -10,7 +10,6 @@ import { loginSchema, type LoginFormValues } from "@/lib/auth";
 
 export default function LoginForm() {
   const router = useRouter();
-  const supabase = createClient();
   const {
     register,
     handleSubmit,
@@ -21,6 +20,7 @@ export default function LoginForm() {
   });
 
   const onSubmit = async (values: LoginFormValues) => {
+    const supabase = createClient();
     const { error } = await supabase.auth.signInWithPassword(values);
     if (error) {
       setError("root", {
