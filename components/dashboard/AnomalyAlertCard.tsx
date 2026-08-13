@@ -2,6 +2,7 @@ import React from "react";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Dialog } from "../ui/dialog";
 import { Anomaly } from "@/lib/type";
+import { getAnomalyPercent } from "@/lib/anomaly";
 export default function AnomalyAlertCard({
   className,
   data = [],
@@ -23,11 +24,9 @@ export default function AnomalyAlertCard({
 
 const AlertText = (item: Anomaly) => {
   return (
-    <div key={(item.service, item.region)}>
-      {item.service} ({item.region}) 전일 대비 +
-      {Math.round((item.daily_cost - item.prev_day_cost) / item.prev_day_cost) *
-        100}
-      % 급증
+    <div key={`${item.service}-${item.region}`}>
+      {item.service} ({item.region}) 전일 대비 +{getAnomalyPercent(item)}%
+      급증
     </div>
   );
 };

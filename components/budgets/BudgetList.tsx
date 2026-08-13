@@ -10,19 +10,19 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { Table, TableBody, TableHeader } from "../ui/table";
-import { BudgetList } from "@/lib/type";
+import type { BudgetList as BudgetListItem } from "@/lib/type";
 import { Slider } from "../ui/slider";
 
 export default function BudgetList({
   data,
   className,
 }: {
-  data: BudgetList[];
+  data: BudgetListItem[];
   className?: string;
 }) {
   const [sorting, setSorting] = useState<SortingState>([]);
 
-  const columns = useMemo<ColumnDef<BudgetList>[]>(
+  const columns = useMemo<ColumnDef<BudgetListItem>[]>(
     () => [
       {
         accessorKey: "id",

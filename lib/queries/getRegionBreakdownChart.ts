@@ -5,5 +5,9 @@ export default async function getRegionBreakdownChart() {
 
   const { data, error } = await query;
 
+  if (error) {
+    throw new Error(error.message);
+  }
+
   return { data, error };
 }

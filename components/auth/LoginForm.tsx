@@ -3,20 +3,10 @@
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { Input } from "@/components/ui/input"; // 사용 중인 UI 컴포넌트 경로
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
-
-const loginSchema = z.object({
-  email: z
-    .string()
-    .min(1, { message: "이메일을 입력해 주세요." })
-    .email({ message: "올바른 이메일 형식이 아닙니다." }),
-  password: z.string().min(1, { message: "비밀번호를 입력해 주세요." }),
-});
-
-type LoginFormValues = z.infer<typeof loginSchema>;
+import { loginSchema, type LoginFormValues } from "@/lib/auth";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -56,7 +46,11 @@ export default function LoginForm() {
       </div>
       {errors.root && <p role="alert">{errors.root.message}</p>}
       <div>
-        <p>admin@admin.com admin1234</p>
+        {process.env.NODE_ENV === "development" && (
+          <p className="text-xs text-muted-foreground">
+            (개발용) admin@admin.com admin1234
+          </p>
+        )}
         <Button type="submit" disabled={isSubmitting}>
           로그인
         </Button>

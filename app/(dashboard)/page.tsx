@@ -11,7 +11,8 @@ import useCostTrend from "@/lib/hooks/useCostTrend";
 import useMonthCost from "@/lib/hooks/useMonthCost";
 import useRegionBreakdownChart from "@/lib/hooks/useRegionBreakdownChart";
 import useServiceBreakdownChart from "@/lib/hooks/useServiceBreakdownChart";
-import { Anomaly, BudgetLimit } from "@/lib/type";
+import { detectAnomalies } from "@/lib/anomaly";
+import { getTotalBudgetUsagePercent } from "@/lib/budget";
 
 export default function Home() {
   const {
@@ -57,63 +58,77 @@ export default function Home() {
   } = useServiceBreakdownChart();
 
   const monthCostDataFooterText = () => {
-    if (ThisMonthCostData?.data - BeforeMonthCostData?.data > 0) {
-      return `전월 대비 ${(((ThisMonthCostData?.data - BeforeMonthCostData?.data) / BeforeMonthCostData?.data) * 100).toFixed(2)}%`;
+    if (
+      ThisMonthCostData?.data === undefined ||
+      BeforeMonthCostData?.data === undefined
+    ) {
+      return "";
     }
-    return "";
+    const diff = ThisMonthCostData.data - BeforeMonthCostData.data;
+    if (diff <= 0 || BeforeMonthCostData.data === 0) {
+      return "";
+    }
+    return `전월 대비 ${((diff / BeforeMonthCostData.data) * 100).toFixed(2)}%`;
   };
 
-  //통합 소진율
-  const monthBudgetLimitCard = (data: BudgetLimit[]) => {
-    if (!data || data.length === 0) return;
+  const isDashboardLoading =
+    ThisMonthCostLoading ||
+    BeforeMonthCostLoading ||
+    costAnomaliesLoading ||
+    budgetLimitLoading ||
+    dailyCostLoading ||
+    regionBreakdownChartLoading ||
+    serviceBreakdownChartLoading;
 
-    const total = data.reduce(
-      (acc, curr) => {
-        return {
-          totalLimit: acc.totalLimit + curr.monthly_limit,
-          totalSpend: acc.totalSpend + curr.current_spend,
-        };
-      },
-      { totalLimit: 0, totalSpend: 0 },
+  const dashboardError =
+    ThisMonthCostError ||
+    BeforeMonthCostError ||
+    costAnomaliesError ||
+    budgetLimitError ||
+    dailyCostError ||
+    regionBreakdownChartError ||
+    serviceBreakdownChartError;
+
+  if (isDashboardLoading) {
+    return (
+      <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
+        <p className="py-10 text-sm text-muted-foreground">
+          대시보드를 불러오는 중입니다...
+        </p>
+      </div>
     );
+  }
 
-    if (total.totalLimit === 0) return 0;
-
-    const totalLimit = (total.totalSpend / total.totalLimit) * 100;
-
-    return Number(totalLimit.toFixed(1));
-  };
-
-  //최근 7일 중 이상건수 중, 전일 대비 30% 증감 리스트
-  const AnomalyAlertList = (data: Anomaly[]) => {
-    if (!data || data.length === 0) return;
-    return data.filter(
-      (item) =>
-        ((item.daily_cost - item.prev_day_cost) / item.prev_day_cost) * 100 >
-        30,
+  if (dashboardError) {
+    return (
+      <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
+        <p className="py-10 text-sm text-destructive">
+          데이터를 불러오는 중 오류가 발생했습니다: {dashboardError.message}
+        </p>
+      </div>
     );
-  };
+  }
 
   return (
     <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
       <main className=" w-full max-w-3xl py-10 px-8 grid grid-cols-3 gap-4">
         <SummaryCard
           title="이번 달 총 비용"
-          data={`$ ${ThisMonthCostData?.data.toFixed(2)}`}
+          data={`$ ${(ThisMonthCostData?.data ?? 0).toFixed(2)}`}
           footer={monthCostDataFooterText()}
         />
         <BudgetProgressCard
-          totalLimit={monthBudgetLimitCard(budgetLimitData?.data) || 0}
+          totalLimit={getTotalBudgetUsagePercent(budgetLimitData?.data || [])}
           data={budgetLimitData?.data || []}
         />
         <SummaryCard
           title="이상 비용 건수"
-          data={costAnomaliesData?.data.length}
+          data={String(costAnomaliesData?.data.length ?? 0)}
           footer="최근 7일"
         />
         <AnomalyAlertCard
           className="col-span-3"
-          data={AnomalyAlertList(costAnomaliesData?.data) || []}
+          data={detectAnomalies(costAnomaliesData?.data)}
         />
         <CostTrendChart className="col-span-2" data={dailyCostData?.data} />
         <ServiceBreakdownChart

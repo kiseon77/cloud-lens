@@ -1,6 +1,10 @@
 import { createClient } from "@/lib/supabase/client";
+import { ToggleAlertRulePayload } from "@/lib/postType";
 
-export default async function toggleAlertRuleActive({ id, is_active }) {
+export default async function toggleAlertRuleActive({
+  id,
+  is_active,
+}: ToggleAlertRulePayload) {
   const { data, error } = await createClient()
     .from("alert_rules")
     .update({ is_active })

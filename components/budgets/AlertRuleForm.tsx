@@ -145,10 +145,16 @@ export default function AlertRuleForm({
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <div>
-          <p className="text-sm text-muted-foreground mb-1">
+          <label
+            id="threshold-slider-label"
+            htmlFor="threshold-slider"
+            className="text-sm text-muted-foreground mb-1 block"
+          >
             임계치 {threshold}%
-          </p>
+          </label>
           <ThresholdSlider
+            id="threshold-slider"
+            aria-labelledby="threshold-slider-label"
             // budgetId(예산)가 바뀔 때만 새 기본값으로 리마운트되도록 key를 줍니다.
             // value를 매번 controlled로 넘기면 드래그 중 리렌더와 충돌해
             // 마우스를 따라오지 않거나 값이 튀는 문제가 생겨서, 드래그 중에는
@@ -158,7 +164,7 @@ export default function AlertRuleForm({
             min={0}
             max={100}
             step={1}
-            onValueChange={(vals: number[] | number) => {
+            onValueChange={(vals: number | readonly number[]) => {
               const next = Array.isArray(vals) ? vals[0] : vals;
               if (typeof next === "number" && !Number.isNaN(next)) {
                 setThreshold(next);
@@ -167,10 +173,11 @@ export default function AlertRuleForm({
           />
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex gap-2" role="radiogroup" aria-label="알림 채널">
           <Button
             type="button"
             variant={channel === "email" ? "default" : "outline"}
+            aria-pressed={channel === "email"}
             onClick={() => handleChannelSelect("email")}
           >
             이메일
@@ -178,6 +185,7 @@ export default function AlertRuleForm({
           <Button
             type="button"
             variant={channel === "slack" ? "default" : "outline"}
+            aria-pressed={channel === "slack"}
             onClick={() => handleChannelSelect("slack")}
           >
             슬랙

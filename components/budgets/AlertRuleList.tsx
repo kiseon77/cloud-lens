@@ -12,7 +12,7 @@ import {
 import { Table, TableBody, TableHeader } from "../ui/table";
 import { BudgetList } from "@/lib/type";
 import { Switch } from "../ui/switch";
-import useToggleAlertRule from "@/lib/hooks/useRegionBreakdownChart";
+import useToggleAlertRule from "@/lib/hooks/useToggleAlertRule";
 
 export default function AlertRuleList({
   data,

@@ -1,6 +1,10 @@
 import { createClient } from "@/lib/supabase/client";
+import { BudgetUpdatePayload } from "@/lib/postType";
 
-export default async function updateBudget({ id, ...payload }) {
+export default async function updateBudget({
+  id,
+  ...payload
+}: BudgetUpdatePayload) {
   const { data, error } = await createClient()
     .from("budgets")
     .update(payload)

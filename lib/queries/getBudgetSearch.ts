@@ -15,5 +15,10 @@ export default async function getBudgetSearch(
   }
 
   const { data, error } = await query.maybeSingle();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
   return { data, error };
 }

@@ -1,4 +1,4 @@
-import { Cell, Pie, PieChart, Tooltip } from "recharts";
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { CostTrend } from "@/lib/type";
 //서비스별 비용 비중 도넛/파이차트
@@ -21,27 +21,29 @@ export default function ServiceBreakdownChart({
     <Card className={className}>
       <CardHeader>서비스별 비용 분포</CardHeader>
       <CardContent>
-        <PieChart width={200} height={200}>
-          <Pie
-            data={data}
-            dataKey="total_cost"
-            nameKey="service"
-            cx="50%"
-            cy="50%"
-            innerRadius={50}
-            outerRadius={80}
-            paddingAngle={0}
-          >
-            {data?.map((entry, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={COLORS[index % COLORS.length]}
-              />
-            ))}
-          </Pie>
+        <ResponsiveContainer width="100%" height={200}>
+          <PieChart>
+            <Pie
+              data={data}
+              dataKey="total_cost"
+              nameKey="service"
+              cx="50%"
+              cy="50%"
+              innerRadius={50}
+              outerRadius={80}
+              paddingAngle={0}
+            >
+              {data?.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={COLORS[index % COLORS.length]}
+                />
+              ))}
+            </Pie>
 
-          <Tooltip />
-        </PieChart>
+            <Tooltip />
+          </PieChart>
+        </ResponsiveContainer>
       </CardContent>
     </Card>
   );

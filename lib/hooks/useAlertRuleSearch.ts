@@ -1,7 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import getAlertRule from "@/lib/queries/getAlertRule";
 
-export default function useAlertRuleSearch(budgetId) {
+export default function useAlertRuleSearch(
+  budgetId?: string | number | null,
+) {
   return useQuery({
     queryKey: ["alertRule", budgetId],
     queryFn: () => getAlertRule(budgetId),

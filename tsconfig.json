@@ -28,8 +28,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
-    "**/*.mts",
-    "lib/hooks/useAddAlertRule.ㅅs"
+    "**/*.mts"
   ],
   "exclude": ["node_modules"]
 }

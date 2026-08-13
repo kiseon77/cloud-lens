@@ -15,5 +15,9 @@ export default async function getMonthCost({
     },
   );
 
+  if (error) {
+    throw new Error(error.message);
+  }
+
   return { data: totalCost, error };
 }
