@@ -145,7 +145,7 @@ export default function AlertRuleForm({
   return (
     <Card>
       <CardHeader className="font-bold text-lg flex justify-between">
-        <p>{isEditMode ? "알람규칙 수정" : "알람규칙"}</p>
+        <p>{isEditMode ? "알람규칙 수정" : "새 알람규칙"}</p>
         <Input
           className="w-2/3"
           type="text"
