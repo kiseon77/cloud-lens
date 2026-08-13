@@ -12,6 +12,7 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import type { BudgetList as BudgetListItem } from "@/lib/type";
 import { Slider } from "../ui/slider";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { cn } from "@/lib/utils";
 import {
   getBudgetUsagePercent,
@@ -88,16 +89,22 @@ export default function BudgetList({
             usagePercent >= budget.threshold_percent - NEAR_THRESHOLD_GAP_PERCENT;
 
           return (
-            <Slider
-              value={usagePercent}
-              min={0}
-              max={100}
-              className={cn(
-                hasActiveAlert &&
-                  "**:data-[slot=slider-range]:bg-destructive",
-                isNearThreshold && "**:data-[slot=slider-range]:bg-yellow-500",
-              )}
-            />
+            <Tooltip>
+              <TooltipTrigger render={<div className="w-full" />}>
+                <Slider
+                  value={usagePercent}
+                  min={0}
+                  max={100}
+                  className={cn(
+                    hasActiveAlert &&
+                      "**:data-[slot=slider-range]:bg-destructive",
+                    isNearThreshold &&
+                      "**:data-[slot=slider-range]:bg-yellow-500",
+                  )}
+                />
+              </TooltipTrigger>
+              <TooltipContent>{usagePercent}% 사용</TooltipContent>
+            </Tooltip>
           );
         },
         size: 200,
