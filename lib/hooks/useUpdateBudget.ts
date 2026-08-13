@@ -7,8 +7,9 @@ export default function useUpdateBudget() {
   return useMutation({
     mutationFn: updateBudget,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["budgetList"] });
-      queryClient.invalidateQueries({ queryKey: ["budgetSearch"] });
+      queryClient.invalidateQueries({ queryKey: ["budgetData"] });
+      queryClient.invalidateQueries({ queryKey: ["budgetSearchData"] });
+      queryClient.invalidateQueries({ queryKey: ["budgetLimit"] });
     },
   });
 }

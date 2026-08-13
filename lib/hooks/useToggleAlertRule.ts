@@ -18,10 +18,10 @@ export default function useToggleAlertRule() {
   return useMutation({
     mutationFn: toggleAlertRuleActive,
     onMutate: async ({ id, is_active }) => {
-      await queryClient.cancelQueries({ queryKey: ["ruleList"] });
-      const previous = queryClient.getQueryData(["ruleList"]);
+      await queryClient.cancelQueries({ queryKey: ["ruleData"] });
+      const previous = queryClient.getQueryData(["ruleData"]);
 
-      queryClient.setQueryData<RuleListCache>(["ruleList"], (old) => {
+      queryClient.setQueryData<RuleListCache>(["ruleData"], (old) => {
         if (!old?.data) return old;
         return {
           ...old,
@@ -35,12 +35,12 @@ export default function useToggleAlertRule() {
     },
     onError: (error, _variables, context) => {
       if (context?.previous) {
-        queryClient.setQueryData(["ruleList"], context.previous);
+        queryClient.setQueryData(["ruleData"], context.previous);
       }
       alert(`상태 변경 중 오류가 발생했습니다: ${error.message}`);
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["ruleList"] });
+      queryClient.invalidateQueries({ queryKey: ["ruleData"] });
       queryClient.invalidateQueries({ queryKey: ["alertRule"] });
     },
   });

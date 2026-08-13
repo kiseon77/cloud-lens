@@ -7,7 +7,7 @@ export default function useAddAlertRule() {
   return useMutation({
     mutationFn: postAddAlertRule,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["ruleList"] });
+      queryClient.invalidateQueries({ queryKey: ["ruleData"] });
       queryClient.invalidateQueries({ queryKey: ["alertRule"] });
     },
   });

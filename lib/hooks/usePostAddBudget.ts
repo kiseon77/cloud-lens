@@ -11,6 +11,7 @@ export default function useAddBudget() {
     onSuccess: (data) => {
       console.log("예산 등록 성공:", data);
       queryClient.invalidateQueries({ queryKey: ["budgetSearchData"] });
+      queryClient.invalidateQueries({ queryKey: ["budgetData"] });
     },
 
     onError: (error) => {
