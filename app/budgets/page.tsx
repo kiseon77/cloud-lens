@@ -1,5 +1,6 @@
 "use client";
 
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import AlertRuleForm from "@/components/budgets/AlertRuleForm";
 import AlertRuleList from "@/components/budgets/AlertRuleList";
 import BudgetForm from "@/components/budgets/BudgetForm";
@@ -40,8 +41,8 @@ export default function Budgets() {
   const totalPages = Math.ceil((budgetList?.count || 0) / pageSize);
 
   return (
-    <div className="flex  w-full flex-col items-center gap-8 py-32 px-16 bg-white dark:bg-black sm:items-start">
-      <main className=" w-full grid grid-cols-2 gap-y-8 gap-x-4">
+    <div className="flex flex-1 flex-col items-center bg-zinc-50 font-sans dark:bg-black">
+      <main className="grid w-full max-w-5xl grid-cols-2 gap-4 py-10 px-8">
         <BudgetForm
           budgetForm={budgetForm}
           setBudgetForm={setBudgetForm}
@@ -52,18 +53,26 @@ export default function Budgets() {
           budgetData={budgetSearchData?.data}
         />
 
-        <div className="col-span-2 flex flex-col gap-4">
-          <BudgetList data={budgetList?.data || []} />
-          {totalPages > pageSize && (
-            <Pagination
-              page={page}
-              totalPages={totalPages}
-              onPageChange={setPage}
-            />
-          )}
-        </div>
+        <Card className="col-span-2">
+          <CardHeader className="font-bold text-lg">예산 목록</CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            <BudgetList data={budgetList?.data || []} />
+            {totalPages > pageSize && (
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                onPageChange={setPage}
+              />
+            )}
+          </CardContent>
+        </Card>
 
-        <AlertRuleList data={ruleList?.data || []} className="col-span-2" />
+        <Card className="col-span-2">
+          <CardHeader className="font-bold text-lg">알람규칙 목록</CardHeader>
+          <CardContent>
+            <AlertRuleList data={ruleList?.data || []} />
+          </CardContent>
+        </Card>
       </main>
     </div>
   );
