@@ -28,35 +28,55 @@ export default function CostDataTable({ data }: { data: CostData[] }) {
       },
       {
         accessorKey: "service",
-        header: () => <span>서비스</span>,
-        cell: (info) => info.getValue(),
+        header: () => <span className="block text-center">서비스</span>,
+        cell: (info) => (
+          <span className="block text-center">
+            {info.getValue() as string}
+          </span>
+        ),
         size: 120,
       },
       {
         accessorKey: "region",
-        header: () => <span>리전</span>,
-        cell: (info) => info.getValue(),
+        header: () => <span className="block text-center">리전</span>,
+        cell: (info) => (
+          <span className="block text-center">
+            {info.getValue() as string}
+          </span>
+        ),
         size: 120,
       },
       {
         accessorKey: "tags",
-        header: () => <span>태그</span>,
+        header: () => <span className="block text-center">태그</span>,
         cell: (info) => {
           const tags = info.getValue() as Record<string, string>;
-          return <Badge>{tags.Team}</Badge>;
+          return (
+            <div className="flex justify-center">
+              <Badge>{tags.Team}</Badge>
+            </div>
+          );
         },
         size: 120,
       },
       {
         accessorKey: "daily_cost",
-        header: () => <span>일일비용</span>,
-        cell: (info) => info.getValue(),
+        header: () => <span className="block text-right">일일비용</span>,
+        cell: (info) => (
+          <span className="block text-right">
+            {(info.getValue() as number).toLocaleString()}
+          </span>
+        ),
         size: 120,
       },
       {
         accessorKey: "monthly_cost",
-        header: () => <span>월비용</span>,
-        cell: (info) => info.getValue(),
+        header: () => <span className="block text-right">월비용</span>,
+        cell: (info) => (
+          <span className="block text-right">
+            {(info.getValue() as number).toLocaleString()}
+          </span>
+        ),
         size: 120,
       },
     ],

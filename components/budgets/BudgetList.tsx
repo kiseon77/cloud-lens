@@ -34,19 +34,27 @@ export default function BudgetList({
       },
       {
         accessorKey: "monthly_limit",
-        header: () => <span>월 예산</span>,
-        cell: (info) => info.getValue(),
+        header: () => <span className="block text-right">월 예산</span>,
+        cell: (info) => (
+          <span className="block text-right">
+            {(info.getValue() as number).toLocaleString()}
+          </span>
+        ),
         size: 120,
       },
       {
         accessorKey: "current_spend",
-        header: () => <span>현재 소진</span>,
-        cell: (info) => info.getValue(),
+        header: () => <span className="block text-right">현재 소진</span>,
+        cell: (info) => (
+          <span className="block text-right">
+            {(info.getValue() as number).toLocaleString()}
+          </span>
+        ),
         size: 120,
       },
       {
         accessorKey: "threshold_percent",
-        header: () => <span>진행률</span>,
+        header: () => <span className="block text-center">진행률</span>,
         cell: (info) => {
           return <Slider value={info.getValue() as number} min={0} max={100} />;
         },

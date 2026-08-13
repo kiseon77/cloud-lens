@@ -36,17 +36,21 @@ export default function AlertRuleList({
       },
       {
         accessorKey: "channel",
-        header: () => <span>채널</span>,
-        cell: (info) => info.getValue(),
+        header: () => <span className="block text-center">채널</span>,
+        cell: (info) => (
+          <span className="block text-center">
+            {info.getValue() as string}
+          </span>
+        ),
         size: 96,
       },
       {
         accessorKey: "is_active",
-        header: () => <span>상태</span>,
+        header: () => <span className="block text-center">상태</span>,
         cell: (info) => {
           const is_active = info.getValue() as boolean;
           return (
-            <span className="inline-block w-12">
+            <span className="block text-center">
               {is_active ? "활성" : "비활성"}
             </span>
           );
@@ -64,13 +68,15 @@ export default function AlertRuleList({
           const isRowPending = isPending && variables?.id === rule.id;
 
           return (
-            <Switch
-              checked={rule.is_active}
-              disabled={isRowPending}
-              onCheckedChange={(checked: boolean) => {
-                toggleActive({ id: rule.id, is_active: checked });
-              }}
-            />
+            <div className="flex justify-center">
+              <Switch
+                checked={rule.is_active}
+                disabled={isRowPending}
+                onCheckedChange={(checked: boolean) => {
+                  toggleActive({ id: rule.id, is_active: checked });
+                }}
+              />
+            </div>
           );
         },
         size: 56,
