@@ -90,12 +90,17 @@ export default function BudgetList({
 
           return (
             <Tooltip>
-              <TooltipTrigger render={<div className="w-full" />}>
+              <TooltipTrigger
+                render={
+                  <div className="relative flex w-full items-center py-2" />
+                }
+              >
                 <Slider
                   value={usagePercent}
                   min={0}
                   max={100}
                   className={cn(
+                    "pointer-events-none",
                     hasActiveAlert &&
                       "**:data-[slot=slider-range]:bg-destructive",
                     isNearThreshold &&
