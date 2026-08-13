@@ -30,6 +30,7 @@ export default function AlertRuleForm({
   const [description, setDescription] = useState("");
   const [threshold, setThreshold] = useState(80);
   const [channel, setChannel] = useState<Channel | null>(null);
+  const [sliderResetKey, setSliderResetKey] = useState(0);
 
   const { data: alertRuleSearchData, isLoading: isAlertRuleLoading } =
     useAlertRuleSearch(budgetId);
@@ -48,6 +49,17 @@ export default function AlertRuleForm({
     isBudgetUpdatePending ||
     isAlertRuleLoading;
 
+  const buildTemplate = (thresholdValue: number) =>
+    budgetData?.scope_value
+      ? `${budgetData.scope_value} 예산 ${thresholdValue}% 초과 시`
+      : "";
+
+  const defaultThreshold =
+    budgetData?.threshold_percent !== undefined &&
+    budgetData?.threshold_percent !== null
+      ? budgetData.threshold_percent
+      : 80;
+
   // 예산(budgetId)이 바뀌거나, 해당 예산에 등록된 규칙 조회 결과가 오면
   // 기존 값이 있으면 그대로 채워주고, 없으면 budgets 테이블의 값을 기본값으로 사용합니다.
   useEffect(() => {
@@ -58,29 +70,39 @@ export default function AlertRuleForm({
       return;
     }
 
-    const nextThreshold =
-      budgetData?.threshold_percent !== undefined &&
-      budgetData?.threshold_percent !== null
-        ? budgetData.threshold_percent
-        : 80;
-
     // 기존 규칙이 있으면 description은 비워두고 플레이스홀더로만 보여줍니다
     // (미입력 시 저장 단계에서 기존 값을 그대로 유지). 신규 작성 시에는
     // 팀/임계치를 반영한 템플릿을 기본값으로 채워줍니다.
-    setDescription(
-      existingRule
-        ? ""
-        : budgetData?.scope_value
-          ? `${budgetData.scope_value} 예산 ${nextThreshold}% 초과 시`
-          : "",
-    );
+    setDescription(existingRule ? "" : buildTemplate(defaultThreshold));
     setChannel(
       (existingRule?.channel as Channel | undefined) ??
         (budgetData?.alert_channel as Channel | undefined) ??
         null,
     );
-    setThreshold(nextThreshold);
+    setThreshold(defaultThreshold);
+    setSliderResetKey((prev) => prev + 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [budgetId, existingRule, budgetData]);
+
+  // 수정 모드에서 슬라이더를 움직이면, 플레이스홀더로만 보이던 설명을
+  // 새 임계치를 반영한 템플릿으로 활성화해 입력창에 채워줍니다.
+  const handleThresholdChange = (next: number) => {
+    setThreshold(next);
+    if (isEditMode) {
+      setDescription(buildTemplate(next));
+    }
+  };
+
+  const handleResetToExisting = () => {
+    setDescription(isEditMode ? "" : buildTemplate(defaultThreshold));
+    setThreshold(defaultThreshold);
+    setChannel(
+      (existingRule?.channel as Channel | undefined) ??
+        (budgetData?.alert_channel as Channel | undefined) ??
+        null,
+    );
+    setSliderResetKey((prev) => prev + 1);
+  };
 
   const handleChannelSelect = (value: Channel) => {
     // 단일 선택: 같은 값을 다시 누르면 선택 해제, 다른 값을 누르면 교체
@@ -169,11 +191,12 @@ export default function AlertRuleForm({
           <ThresholdSlider
             id="threshold-slider"
             aria-labelledby="threshold-slider-label"
-            // budgetId(예산)가 바뀔 때만 새 기본값으로 리마운트되도록 key를 줍니다.
-            // value를 매번 controlled로 넘기면 드래그 중 리렌더와 충돌해
-            // 마우스를 따라오지 않거나 값이 튀는 문제가 생겨서, 드래그 중에는
-            // uncontrolled(defaultValue)로 두고 onValueChange로만 상태를 동기화합니다.
-            key={`${budgetId ?? "none"}-${existingRule?.id ?? "new"}`}
+            // budgetId(예산)가 바뀌거나 초기화 버튼을 누를 때 새 기본값으로
+            // 리마운트되도록 key를 줍니다. value를 매번 controlled로 넘기면
+            // 드래그 중 리렌더와 충돌해 마우스를 따라오지 않거나 값이 튀는
+            // 문제가 생겨서, 드래그 중에는 uncontrolled(defaultValue)로 두고
+            // onValueChange로만 상태를 동기화합니다.
+            key={`${budgetId ?? "none"}-${existingRule?.id ?? "new"}-${sliderResetKey}`}
             defaultValue={[threshold]}
             min={0}
             max={100}
@@ -181,7 +204,7 @@ export default function AlertRuleForm({
             onValueChange={(vals: number | readonly number[]) => {
               const next = Array.isArray(vals) ? vals[0] : vals;
               if (typeof next === "number" && !Number.isNaN(next)) {
-                setThreshold(next);
+                handleThresholdChange(next);
               }
             }}
           />
@@ -206,8 +229,18 @@ export default function AlertRuleForm({
           </Button>
         </div>
       </CardContent>
-      <CardFooter>
-        <Button className="w-full" onClick={handleSubmit} disabled={isPending}>
+      <CardFooter className="flex gap-2">
+        {isEditMode && (
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleResetToExisting}
+            disabled={isPending}
+          >
+            초기화
+          </Button>
+        )}
+        <Button className="flex-1" onClick={handleSubmit} disabled={isPending}>
           {isPending ? "저장 중..." : isEditMode ? "수정" : "저장"}
         </Button>
       </CardFooter>
