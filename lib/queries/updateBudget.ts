@@ -1,7 +1,7 @@
-import { supabase } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 
 export default async function updateBudget({ id, ...payload }) {
-  const { data, error } = await supabase
+  const { data, error } = await createClient()
     .from("budgets")
     .update(payload)
     .eq("id", id)

@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 
 export default async function getMonthCost({
   start,
@@ -7,7 +7,7 @@ export default async function getMonthCost({
   start: string;
   end: string;
 }) {
-  const { data: totalCost, error } = await supabase.rpc(
+  const { data: totalCost, error } = await createClient().rpc(
     "get_total_resource_cost",
     {
       start_date: start,

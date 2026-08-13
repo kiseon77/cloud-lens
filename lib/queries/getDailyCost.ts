@@ -1,7 +1,7 @@
-import { supabase } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 
 export default async function getCostTrend({ daysBack = 30 }) {
-  const { data, error } = await supabase.rpc("get_cost_trend", {
+  const { data, error } = await createClient().rpc("get_cost_trend", {
     days_back: daysBack,
   });
 

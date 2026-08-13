@@ -1,10 +1,10 @@
-import { supabase } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 
 export default async function getBudgetSearch(
   scopeType: string,
   scopeValue: string,
 ) {
-  let query = supabase.from("budgets").select("*");
+  let query = createClient().from("budgets").select("*");
 
   if (scopeType) {
     query = query.eq(`scope_type`, scopeType.toLowerCase());

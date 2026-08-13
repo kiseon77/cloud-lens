@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 
 export default async function getResourceData(
   page: number,
@@ -8,7 +8,9 @@ export default async function getResourceData(
   regionFilter: string,
   tagFilter: string,
 ) {
-  let query = supabase.from("resource_costs").select("*", { count: "exact" });
+  let query = createClient()
+    .from("resource_costs")
+    .select("*", { count: "exact" });
 
   if (handleDebounce) {
     query = query.ilike(`resource_name`, `%${handleDebounce}%`);

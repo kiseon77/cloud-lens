@@ -1,11 +1,11 @@
-import { supabase } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 
 export default async function getAlertRule(budgetId) {
   if (!budgetId) {
     return { data: null, error: null };
   }
 
-  const { data, error } = await supabase
+  const { data, error } = await createClient()
     .from("alert_rules")
     .select("*")
     .eq("budget_id", budgetId)
