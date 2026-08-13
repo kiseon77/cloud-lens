@@ -1,6 +1,7 @@
 import { BudgetLimit } from "@/lib/type";
 
 export const BUDGET_WARNING_THRESHOLD_PERCENT = 80;
+export const NEAR_THRESHOLD_GAP_PERCENT = 20;
 
 export function getBudgetUsagePercent(
   currentSpend: number,

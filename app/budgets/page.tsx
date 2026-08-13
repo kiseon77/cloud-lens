@@ -56,7 +56,10 @@ export default function Budgets() {
         <Card className="col-span-2">
           <CardHeader className="font-bold text-lg">예산 목록</CardHeader>
           <CardContent className="flex flex-col gap-4">
-            <BudgetList data={budgetList?.data || []} />
+            <BudgetList
+              data={budgetList?.data || []}
+              alertRules={ruleList?.data || []}
+            />
             {totalPages > pageSize && (
               <Pagination
                 page={page}

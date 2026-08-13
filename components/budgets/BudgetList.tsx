@@ -12,15 +12,36 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import type { BudgetList as BudgetListItem } from "@/lib/type";
 import { Slider } from "../ui/slider";
+import { cn } from "@/lib/utils";
+import {
+  getBudgetUsagePercent,
+  NEAR_THRESHOLD_GAP_PERCENT,
+} from "@/lib/budget";
+
+interface AlertRuleSummary {
+  budget_id: string | number;
+  is_active: boolean;
+}
 
 export default function BudgetList({
   data,
+  alertRules = [],
   className,
 }: {
   data: BudgetListItem[];
+  alertRules?: AlertRuleSummary[];
   className?: string;
 }) {
   const [sorting, setSorting] = useState<SortingState>([]);
+  const activeAlertBudgetIds = useMemo(
+    () =>
+      new Set(
+        alertRules
+          .filter((rule) => rule.is_active)
+          .map((rule) => rule.budget_id),
+      ),
+    [alertRules],
+  );
 
   const columns = useMemo<ColumnDef<BudgetListItem>[]>(
     () => [
@@ -53,15 +74,36 @@ export default function BudgetList({
         size: 120,
       },
       {
-        accessorKey: "threshold_percent",
+        id: "usage_percent",
         header: () => <span className="block text-center">진행률</span>,
-        cell: (info) => {
-          return <Slider value={info.getValue() as number} min={0} max={100} />;
+        cell: ({ row }) => {
+          const budget = row.original;
+          const usagePercent = getBudgetUsagePercent(
+            budget.current_spend,
+            budget.monthly_limit,
+          );
+          const hasActiveAlert = activeAlertBudgetIds.has(budget.id);
+          const isNearThreshold =
+            !hasActiveAlert &&
+            usagePercent >= budget.threshold_percent - NEAR_THRESHOLD_GAP_PERCENT;
+
+          return (
+            <Slider
+              value={usagePercent}
+              min={0}
+              max={100}
+              className={cn(
+                hasActiveAlert &&
+                  "**:data-[slot=slider-range]:bg-destructive",
+                isNearThreshold && "**:data-[slot=slider-range]:bg-yellow-500",
+              )}
+            />
+          );
         },
         size: 200,
       },
     ],
-    [],
+    [activeAlertBudgetIds],
   );
 
   const table = useReactTable({
