@@ -14,6 +14,7 @@ type Channel = "email" | "slack";
 
 interface BudgetData {
   id?: string | number;
+  scope_value?: string;
   threshold_percent?: number;
   alert_channel?: string | null;
   is_active?: boolean;
@@ -57,18 +58,24 @@ export default function AlertRuleForm({
       return;
     }
 
-    setDescription(existingRule?.description ?? "");
+    const nextThreshold =
+      budgetData?.threshold_percent !== undefined &&
+      budgetData?.threshold_percent !== null
+        ? budgetData.threshold_percent
+        : 80;
+
+    setDescription(
+      existingRule?.description ??
+        (budgetData?.scope_value
+          ? `${budgetData.scope_value} 예산 ${nextThreshold}% 초과 시`
+          : ""),
+    );
     setChannel(
       (existingRule?.channel as Channel | undefined) ??
         (budgetData?.alert_channel as Channel | undefined) ??
         null,
     );
-    setThreshold(
-      budgetData?.threshold_percent !== undefined &&
-        budgetData?.threshold_percent !== null
-        ? budgetData.threshold_percent
-        : 80,
-    );
+    setThreshold(nextThreshold);
   }, [budgetId, existingRule, budgetData]);
 
   const handleChannelSelect = (value: Channel) => {
