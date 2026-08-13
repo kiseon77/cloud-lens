@@ -3,6 +3,7 @@ import "./globals.css";
 import Provider from "./Provider";
 import Header from "@/components/ui/header";
 import Sidebar from "@/components/ui/Sidebar";
+import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -15,18 +16,24 @@ const Routes = [
   { label: "예산 관리 & 알림 설정", route: "/budgets" },
 ];
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const isLoggedIn = !!user;
+
   return (
     <html lang="ko" className={`h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <Provider>
-          <Header Routes={Routes} />
+          <Header Routes={Routes} isLoggedIn={isLoggedIn} />
           <div className="flex flex-1 flex-col md:flex-row">
-            <Sidebar labels={Routes} />
+            {isLoggedIn && <Sidebar labels={Routes} />}
             {children}
           </div>
         </Provider>
