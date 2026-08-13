@@ -64,11 +64,15 @@ export default function AlertRuleForm({
         ? budgetData.threshold_percent
         : 80;
 
+    // 기존 규칙이 있으면 description은 비워두고 플레이스홀더로만 보여줍니다
+    // (미입력 시 저장 단계에서 기존 값을 그대로 유지). 신규 작성 시에는
+    // 팀/임계치를 반영한 템플릿을 기본값으로 채워줍니다.
     setDescription(
-      existingRule?.description ??
-        (budgetData?.scope_value
+      existingRule
+        ? ""
+        : budgetData?.scope_value
           ? `${budgetData.scope_value} 예산 ${nextThreshold}% 초과 시`
-          : ""),
+          : "",
     );
     setChannel(
       (existingRule?.channel as Channel | undefined) ??
@@ -119,7 +123,7 @@ export default function AlertRuleForm({
       updateAlertRule(
         {
           id: existingRule.id,
-          description,
+          description: description || existingRule.description,
           channel,
           is_active: true,
         },
@@ -145,7 +149,10 @@ export default function AlertRuleForm({
         <Input
           className="w-2/3"
           type="text"
-          placeholder="규칙 설명 (예: backend 예산 80% 초과 시)"
+          placeholder={
+            existingRule?.description ||
+            "규칙 설명 (예: backend 예산 80% 초과 시)"
+          }
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
