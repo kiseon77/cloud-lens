@@ -29,12 +29,12 @@ export default async function RootLayout({
 
   return (
     <html lang="ko" className={`h-full antialiased`}>
-      <body className="flex h-full flex-col">
+      <body className="flex h-full flex-col overflow-hidden">
         <Provider>
           <Header Routes={Routes} isLoggedIn={isLoggedIn} />
           <div className="flex min-h-0 flex-1 flex-col md:flex-row">
             {isLoggedIn && <Sidebar labels={Routes} />}
-            {children}
+            <div className="min-h-0 flex-1 overflow-y-auto">{children}</div>
           </div>
         </Provider>
       </body>
