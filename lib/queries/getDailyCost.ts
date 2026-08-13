@@ -5,5 +5,9 @@ export default async function getCostTrend({ daysBack = 30 }) {
     days_back: daysBack,
   });
 
+  if (error) {
+    throw new Error(error.message);
+  }
+
   return { data, error };
 }

@@ -47,7 +47,8 @@ export default function BudgetForm({
   const isEditMode = Boolean(budgetSearchData?.id);
   const isPending = isEditMode ? isUpdatePending : isAddPending;
 
-  const handleSelectChange = (value: string) => {
+  const handleSelectChange = (value: string | null) => {
+    if (!value) return;
     const [type, val] = value.split(":");
 
     setBudgetForm((prev: any) => ({
@@ -92,10 +93,10 @@ export default function BudgetForm({
       monthly_limit: Number(budgetForm.monthly_limit),
     };
 
-    if (isEditMode) {
+    if (isEditMode && budgetSearchData?.id !== undefined) {
       updateBudget(
         {
-          id: budgetSearchData!.id,
+          id: budgetSearchData.id,
           ...payload,
         },
         {

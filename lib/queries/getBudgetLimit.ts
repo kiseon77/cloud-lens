@@ -7,5 +7,9 @@ export default async function getBudgetLimit() {
 
   const { data, error } = await query;
 
+  if (error) {
+    throw new Error(error.message);
+  }
+
   return { data, error };
 }

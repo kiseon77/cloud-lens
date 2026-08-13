@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/client";
 
-export default async function getAlertRule(budgetId) {
+export default async function getAlertRule(budgetId?: string | number | null) {
   if (!budgetId) {
     return { data: null, error: null };
   }

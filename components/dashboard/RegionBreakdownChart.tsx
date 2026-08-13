@@ -1,4 +1,12 @@
-import { Bar, BarChart, Cell, Tooltip, XAxis, YAxis } from "recharts";
+import {
+  Bar,
+  BarChart,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { CostTrend } from "@/lib/type";
 //리전별 비용 바차트
@@ -21,19 +29,21 @@ export default function RegionBreakdownChart({
     <Card className={className}>
       <CardHeader>리전별 비용</CardHeader>
       <CardContent>
-        <BarChart width={600} height={300} data={data}>
-          <XAxis dataKey="region" />
-          <YAxis />
-          <Tooltip />
-          <Bar dataKey="total_cost" radius={[4, 4, 0, 0]}>
-            {data?.map((_, index: number) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={COLORS[index % COLORS.length]}
-              />
-            ))}
-          </Bar>
-        </BarChart>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={data}>
+            <XAxis dataKey="region" />
+            <YAxis />
+            <Tooltip />
+            <Bar dataKey="total_cost" radius={[4, 4, 0, 0]}>
+              {data?.map((_, index: number) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={COLORS[index % COLORS.length]}
+                />
+              ))}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
       </CardContent>
     </Card>
   );
