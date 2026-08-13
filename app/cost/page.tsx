@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { Card, CardContent } from "@/components/ui/card";
 import CostDataTable from "@/components/cost/CostDataTable";
 import ExportCsvButton from "@/components/cost/ExportCsvButton";
 import FilterBar from "@/components/cost/FilterBar";
@@ -53,34 +54,43 @@ export default function Cost() {
     { id: "tag", label: "태그", options: tagList?.data || [] },
   ];
   return (
-    <main className="flex  w-full flex-col items-center gap-8 py-32 px-16 bg-white dark:bg-black sm:items-start">
-      <section className="flex w-full items-center justify-between gap-4">
-        <SearchInput
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-        />
+    <div className="flex flex-1 flex-col items-center bg-zinc-50 font-sans dark:bg-black">
+      <main className="flex w-full max-w-5xl flex-col gap-4 py-10 px-8">
+        <Card>
+          <CardContent className="flex flex-wrap items-center gap-4">
+            <SearchInput
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+            />
 
-        {filterData.map((filter) => (
-          <FilterBar
-            key={filter.id}
-            label={filter.label}
-            setServiceFilter={setServiceFilter}
-            setRegionFilter={setRegionFilter}
-            setTagFilter={setTagFilter}
-            options={filter.options}
-            serviceFilter={serviceFilter}
-            regionFilter={regionFilter}
-            tagFilter={tagFilter}
-          />
-        ))}
-        <ExportCsvButton />
-      </section>
-      <CostDataTable data={data?.data || []} />
-      <Pagination
-        page={page}
-        totalPages={Math.ceil((data?.count || 0) / pageSize)}
-        onPageChange={setPage}
-      />
-    </main>
+            {filterData.map((filter) => (
+              <FilterBar
+                key={filter.id}
+                label={filter.label}
+                setServiceFilter={setServiceFilter}
+                setRegionFilter={setRegionFilter}
+                setTagFilter={setTagFilter}
+                options={filter.options}
+                serviceFilter={serviceFilter}
+                regionFilter={regionFilter}
+                tagFilter={tagFilter}
+              />
+            ))}
+            <ExportCsvButton />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="flex flex-col gap-4">
+            <CostDataTable data={data?.data || []} />
+            <Pagination
+              page={page}
+              totalPages={Math.ceil((data?.count || 0) / pageSize)}
+              onPageChange={setPage}
+            />
+          </CardContent>
+        </Card>
+      </main>
+    </div>
   );
 }
