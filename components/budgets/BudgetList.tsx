@@ -27,17 +27,22 @@ export default function BudgetList({
       {
         accessorKey: "id",
         header: () => <span>팀/프로젝트</span>,
-        cell: (info) => info.getValue(),
+        cell: (info) => (
+          <span className="block truncate">{info.getValue() as string}</span>
+        ),
+        size: 200,
       },
       {
         accessorKey: "monthly_limit",
         header: () => <span>월 예산</span>,
         cell: (info) => info.getValue(),
+        size: 120,
       },
       {
         accessorKey: "current_spend",
         header: () => <span>현재 소진</span>,
         cell: (info) => info.getValue(),
+        size: 120,
       },
       {
         accessorKey: "threshold_percent",
@@ -45,6 +50,7 @@ export default function BudgetList({
         cell: (info) => {
           return <Slider value={info.getValue() as number} min={0} max={100} />;
         },
+        size: 200,
       },
     ],
     [],
@@ -70,7 +76,7 @@ export default function BudgetList({
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <th key={header.id}>
+                <th key={header.id} style={{ width: header.getSize() }}>
                   {header.isPlaceholder
                     ? null
                     : flexRender(
@@ -86,7 +92,7 @@ export default function BudgetList({
           {table.getRowModel().rows.map((row) => (
             <tr key={row.id}>
               {row.getVisibleCells().map((cell) => (
-                <td key={cell.id}>
+                <td key={cell.id} style={{ width: cell.column.getSize() }}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}

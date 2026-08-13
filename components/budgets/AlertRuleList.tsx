@@ -29,20 +29,29 @@ export default function AlertRuleList({
       {
         accessorKey: "description",
         header: () => <span>규칙</span>,
-        cell: (info) => info.getValue(),
+        cell: (info) => (
+          <span className="block truncate">{info.getValue() as string}</span>
+        ),
+        size: 320,
       },
       {
         accessorKey: "channel",
         header: () => <span>채널</span>,
         cell: (info) => info.getValue(),
+        size: 96,
       },
       {
         accessorKey: "is_active",
         header: () => <span>상태</span>,
         cell: (info) => {
           const is_active = info.getValue() as boolean;
-          return is_active ? "활성" : "비활성";
+          return (
+            <span className="inline-block w-12">
+              {is_active ? "활성" : "비활성"}
+            </span>
+          );
         },
+        size: 80,
       },
       {
         id: "is_active_toggle",
@@ -64,6 +73,7 @@ export default function AlertRuleList({
             />
           );
         },
+        size: 56,
       },
     ],
     [isPending, variables, toggleActive],
@@ -89,7 +99,7 @@ export default function AlertRuleList({
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <th key={header.id}>
+                <th key={header.id} style={{ width: header.getSize() }}>
                   {header.isPlaceholder
                     ? null
                     : flexRender(
@@ -105,7 +115,7 @@ export default function AlertRuleList({
           {table.getRowModel().rows.map((row) => (
             <tr key={row.id}>
               {row.getVisibleCells().map((cell) => (
-                <td key={cell.id}>
+                <td key={cell.id} style={{ width: cell.column.getSize() }}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}

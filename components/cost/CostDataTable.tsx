@@ -21,17 +21,22 @@ export default function CostDataTable({ data }: { data: CostData[] }) {
       {
         accessorKey: "resource_name",
         header: () => <span>리소스 명</span>,
-        cell: (info) => info.getValue(),
+        cell: (info) => (
+          <span className="block truncate">{info.getValue() as string}</span>
+        ),
+        size: 240,
       },
       {
         accessorKey: "service",
         header: () => <span>서비스</span>,
         cell: (info) => info.getValue(),
+        size: 120,
       },
       {
         accessorKey: "region",
         header: () => <span>리전</span>,
         cell: (info) => info.getValue(),
+        size: 120,
       },
       {
         accessorKey: "tags",
@@ -40,16 +45,19 @@ export default function CostDataTable({ data }: { data: CostData[] }) {
           const tags = info.getValue() as Record<string, string>;
           return <Badge>{tags.Team}</Badge>;
         },
+        size: 120,
       },
       {
         accessorKey: "daily_cost",
         header: () => <span>일일비용</span>,
         cell: (info) => info.getValue(),
+        size: 120,
       },
       {
         accessorKey: "monthly_cost",
         header: () => <span>월비용</span>,
         cell: (info) => info.getValue(),
+        size: 120,
       },
     ],
     [],
@@ -75,7 +83,7 @@ export default function CostDataTable({ data }: { data: CostData[] }) {
         {table.getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id}>
             {headerGroup.headers.map((header) => (
-              <th key={header.id}>
+              <th key={header.id} style={{ width: header.getSize() }}>
                 {header.isPlaceholder
                   ? null
                   : flexRender(
@@ -91,7 +99,7 @@ export default function CostDataTable({ data }: { data: CostData[] }) {
         {table.getRowModel().rows.map((row) => (
           <tr key={row.id}>
             {row.getVisibleCells().map((cell) => (
-              <td key={cell.id}>
+              <td key={cell.id} style={{ width: cell.column.getSize() }}>
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </td>
             ))}
