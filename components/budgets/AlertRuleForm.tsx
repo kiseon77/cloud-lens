@@ -9,6 +9,7 @@ import useAddAlertRule from "@/lib/hooks/useAddAlertRule";
 import useUpdateAlertRule from "@/lib/hooks/useUpdateAlertRule";
 import useUpdateBudget from "@/lib/hooks/useUpdateBudget";
 import { ThresholdSlider } from "../ui/thresholdSlider";
+import { cn } from "@/lib/utils";
 
 type Channel = "email" | "slack";
 
@@ -48,6 +49,8 @@ export default function AlertRuleForm({
     isUpdatePending ||
     isBudgetUpdatePending ||
     isAlertRuleLoading;
+
+  const isDisabled = !budgetId;
 
   const buildTemplate = (thresholdValue: number) =>
     budgetData?.scope_value
@@ -165,18 +168,21 @@ export default function AlertRuleForm({
   };
 
   return (
-    <Card>
+    <Card className={cn(isDisabled && "opacity-60")}>
       <CardHeader className="font-bold text-lg flex justify-between">
         <p>{isEditMode ? "알람규칙 수정" : "새 알람규칙"}</p>
         <Input
           className="w-2/3"
           type="text"
           placeholder={
-            existingRule?.description ||
-            "규칙 설명 (예: backend 예산 80% 초과 시)"
+            isDisabled
+              ? "먼저 예산(팀/프로젝트)을 선택해 주세요"
+              : existingRule?.description ||
+                "규칙 설명 (예: backend 예산 80% 초과 시)"
           }
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+          disabled={isDisabled}
         />
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
@@ -201,6 +207,7 @@ export default function AlertRuleForm({
             min={0}
             max={100}
             step={1}
+            disabled={isDisabled}
             onValueChange={(vals: number | readonly number[]) => {
               const next = Array.isArray(vals) ? vals[0] : vals;
               if (typeof next === "number" && !Number.isNaN(next)) {
@@ -216,6 +223,7 @@ export default function AlertRuleForm({
             variant={channel === "email" ? "default" : "outline"}
             aria-pressed={channel === "email"}
             onClick={() => handleChannelSelect("email")}
+            disabled={isDisabled}
           >
             이메일
           </Button>
@@ -224,6 +232,7 @@ export default function AlertRuleForm({
             variant={channel === "slack" ? "default" : "outline"}
             aria-pressed={channel === "slack"}
             onClick={() => handleChannelSelect("slack")}
+            disabled={isDisabled}
           >
             슬랙
           </Button>
@@ -235,12 +244,16 @@ export default function AlertRuleForm({
             type="button"
             variant="outline"
             onClick={handleResetToExisting}
-            disabled={isPending}
+            disabled={isPending || isDisabled}
           >
             초기화
           </Button>
         )}
-        <Button className="flex-1" onClick={handleSubmit} disabled={isPending}>
+        <Button
+          className="flex-1"
+          onClick={handleSubmit}
+          disabled={isPending || isDisabled}
+        >
           {isPending ? "저장 중..." : isEditMode ? "수정" : "저장"}
         </Button>
       </CardFooter>
