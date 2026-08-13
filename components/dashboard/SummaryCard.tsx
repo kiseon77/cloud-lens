@@ -18,11 +18,13 @@ export default function SummaryCard({
   footer: string;
 }) {
   return (
-    <Card>
+    <Card className="h-full">
       <CardHeader>
         <CardTitle className="text-muted-foreground">{title}</CardTitle>
       </CardHeader>
-      <CardContent className="text-2xl font-semibold">{data}</CardContent>
+      <CardContent className="flex-1 text-2xl font-semibold">
+        {data}
+      </CardContent>
       {footer.length > 0 && (
         <CardFooter className="px-4 text-sm text-muted-foreground">
           {footer}

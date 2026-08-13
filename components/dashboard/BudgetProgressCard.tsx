@@ -7,6 +7,12 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionPanel,
+  AccordionTrigger,
+} from "../ui/accordion";
 import { BudgetLimit } from "@/lib/type";
 import { cn } from "@/lib/utils";
 import { isBudgetWarning } from "@/lib/budget";
@@ -19,7 +25,7 @@ export default function BudgetProgressCard({
 }) {
   const isWarning = isBudgetWarning(totalLimit);
   return (
-    <Card>
+    <Card className="h-full">
       <CardHeader>
         <CardTitle
           className={cn(
@@ -30,7 +36,7 @@ export default function BudgetProgressCard({
           예산 소진율
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col gap-2">
+      <CardContent className="flex flex-1 flex-col gap-2">
         <span
           className={cn(
             "text-2xl font-semibold",
@@ -46,8 +52,19 @@ export default function BudgetProgressCard({
           )}
         />
       </CardContent>
-      <CardFooter className="px-4 flex-col ">
-        {data.map((item) => DetailFooter(item))}
+      <CardFooter className="px-4 flex-col">
+        <Accordion className="w-full">
+          <AccordionItem className="border-b-0">
+            <AccordionTrigger className="py-0 text-sm text-muted-foreground">
+              팀/프로젝트별 소진율 ({data.length})
+            </AccordionTrigger>
+            <AccordionPanel>
+              <div className="flex flex-col pt-2">
+                {data.map((item) => DetailFooter(item))}
+              </div>
+            </AccordionPanel>
+          </AccordionItem>
+        </Accordion>
       </CardFooter>
     </Card>
   );

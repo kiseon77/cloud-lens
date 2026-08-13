@@ -128,3 +128,21 @@
     @apply font-sans;
   }
 }
+
+@keyframes accordion-panel-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--accordion-panel-height);
+  }
+}
+
+@keyframes accordion-panel-up {
+  from {
+    height: var(--accordion-panel-height);
+  }
+  to {
+    height: 0;
+  }
+}
