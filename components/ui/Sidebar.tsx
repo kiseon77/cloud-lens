@@ -1,6 +1,9 @@
 "use client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { LogOut } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 const SIDEBAR_WIDTH_STORAGE_KEY = "cloudlens:sidebar-width";
 const DEFAULT_WIDTH = 240;
@@ -15,6 +18,13 @@ export default function Sidebar({
   const [width, setWidth] = useState(DEFAULT_WIDTH);
   const [isResizing, setIsResizing] = useState(false);
   const navRef = useRef<HTMLElement>(null);
+  const router = useRouter();
+
+  const handleLogout = useCallback(async () => {
+    await createClient().auth.signOut();
+    router.replace("/login");
+    router.refresh();
+  }, [router]);
 
   // 서버 렌더와 클라이언트 첫 렌더 결과를 동일하게 유지하기 위해(hydration
   // mismatch 방지), localStorage 값은 마운트 이후 effect에서 반영합니다.
@@ -82,6 +92,14 @@ export default function Sidebar({
             route={label.route}
           />
         ))}
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="flex w-full cursor-pointer items-center justify-center gap-2 p-4 text-left hover:bg-gray-300 md:mt-auto md:justify-start"
+        >
+          <LogOut className="size-4 shrink-0" aria-hidden="true" />
+          로그아웃
+        </button>
       </div>
       <div
         role="separator"
