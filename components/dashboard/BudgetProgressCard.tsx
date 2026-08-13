@@ -1,6 +1,12 @@
 import React from "react";
 import { Slider } from "../ui/slider";
-import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
 import { BudgetLimit } from "@/lib/type";
 import { cn } from "@/lib/utils";
 import { isBudgetWarning } from "@/lib/budget";
@@ -14,11 +20,23 @@ export default function BudgetProgressCard({
   const isWarning = isBudgetWarning(totalLimit);
   return (
     <Card>
-      <CardHeader className={cn(isWarning && "text-destructive")}>
-        예산 소진율
+      <CardHeader>
+        <CardTitle
+          className={cn(
+            "text-muted-foreground",
+            isWarning && "text-destructive",
+          )}
+        >
+          예산 소진율
+        </CardTitle>
       </CardHeader>
-      <CardContent>
-        <span className={cn(isWarning && "text-destructive font-semibold")}>
+      <CardContent className="flex flex-col gap-2">
+        <span
+          className={cn(
+            "text-2xl font-semibold",
+            isWarning && "text-destructive",
+          )}
+        >
           {totalLimit}%
         </span>
         <Slider
@@ -44,7 +62,12 @@ const DetailFooter = (data: BudgetLimit) => {
 
   return (
     <div className="w-full py-2" key={data.scope_value}>
-      <span className={cn(isWarning && "text-destructive font-semibold")}>
+      <span
+        className={cn(
+          "text-sm text-muted-foreground",
+          isWarning && "text-destructive font-semibold",
+        )}
+      >
         {data.scope_value} ({data.threshold_percent}%)
       </span>
       <Slider

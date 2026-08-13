@@ -1,5 +1,5 @@
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
-import { Card, CardContent, CardHeader } from "../ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { CostTrend } from "@/lib/type";
 //서비스별 비용 비중 도넛/파이차트
 export default function ServiceBreakdownChart({
@@ -19,7 +19,11 @@ export default function ServiceBreakdownChart({
   ];
   return (
     <Card className={className}>
-      <CardHeader>서비스별 비용 분포</CardHeader>
+      <CardHeader>
+        <CardTitle className="text-muted-foreground">
+          서비스별 비용 분포
+        </CardTitle>
+      </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={200}>
           <PieChart>

@@ -6,7 +6,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { Card, CardContent, CardHeader } from "../ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { CostTrend } from "@/lib/type";
 //Recharts AreaChart/LineChart, 최근 30일 일별 비용 추이
 export default function CostTrendChart({
@@ -18,7 +18,11 @@ export default function CostTrendChart({
 }) {
   return (
     <Card className={className}>
-      <CardHeader>일별 비용 추이(30일)</CardHeader>
+      <CardHeader>
+        <CardTitle className="text-muted-foreground">
+          일별 비용 추이(30일)
+        </CardTitle>
+      </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" aspect={2}>
           <LineChart data={data}>

@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, CardContent, CardHeader } from "../ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Dialog } from "../ui/dialog";
 import { Anomaly } from "@/lib/type";
 import { getAnomalyPercent } from "@/lib/anomaly";
@@ -13,8 +13,12 @@ export default function AnomalyAlertCard({
   return (
     <Dialog>
       <Card className={className}>
-        <CardHeader>이상 비용 경고</CardHeader>
-        <CardContent className="flex ">
+        <CardHeader>
+          <CardTitle className="text-muted-foreground">
+            이상 비용 경고
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-wrap gap-2">
           {data.map((item) => AlertText(item))} {data.length > 1 && "•"}
         </CardContent>
       </Card>

@@ -7,7 +7,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { Card, CardContent, CardHeader } from "../ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { CostTrend } from "@/lib/type";
 //리전별 비용 바차트
 export default function RegionBreakdownChart({
@@ -27,7 +27,9 @@ export default function RegionBreakdownChart({
   ];
   return (
     <Card className={className}>
-      <CardHeader>리전별 비용</CardHeader>
+      <CardHeader>
+        <CardTitle className="text-muted-foreground">리전별 비용</CardTitle>
+      </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={data}>
