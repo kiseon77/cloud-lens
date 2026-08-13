@@ -76,7 +76,6 @@ export default function Cost() {
                 tagFilter={tagFilter}
               />
             ))}
-            <ExportCsvButton />
           </CardContent>
         </Card>
 
